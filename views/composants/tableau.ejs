@@ -39,31 +39,7 @@
 
 <script type="text/javascript">
     (function(){
-        // dans notre fichier .ejs
-        // Notre code JavaScript pour effectuer un transfert AJAX
-
-        // let elmBouton = document.getElementById('testAJAX')
-        // elmBouton.addEventListener('click', ()=>{
-        //     console.log('ok')
-        //     xhr = new XMLHttpRequest();
-        //     xhr.open('POST', "ajax_modifier", true);
-        //     data = {
-        //     "nom" : "AAAA",
-        //     "prenom" : "BBBB",
-        //     "telephone" : "CCCC",
-        //     "_id" : "5a9993f2ceafb71d108010ef"
-        //     }
-        //     console.log(data)
-        //     sData = JSON.stringify(data);
-        //     xhr.setRequestHeader('Content-type', 'application/json');
-        //     xhr.send(sData);
-        //     xhr.addEventListener("readystatechange", traiterRequest, false);
-        // })
-
-        ////////////////////////////////////////////////////////////
-
-        // Pour traiter le résultat transmis par l'application serveur 
-
+        
         function traiterRequest(e) {
             var id = 0;
             console.log("xhr.readyState = " + xhr.readyState)
