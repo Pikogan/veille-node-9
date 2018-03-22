@@ -5,20 +5,16 @@ const app = express();
 const bodyParser= require('body-parser');
 const MongoClient = require('mongodb').MongoClient; // le pilote MongoDB
 const ObjectID = require('mongodb').ObjectID;
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.urlencoded({extended: true}));
 /* on associe le moteur de vue au module «ejs» */
 app.use(express.static('public'));
-const i18n = require('i18n');
-const cookieParser = require('cookie-parser');
+
 
 /* Ajoute l'objet i18n à l'objet global «res» */
-app.use(cookieParser());
-app.use(i18n.init);
 
-i18n.configure({ 
-   locales : ['fr', 'en'],
-   cookie : 'langueChoisie', 
-   directory : __dirname + '/locales' })
+
 
 let db // variable qui contiendra le lien sur la BD
 
@@ -41,26 +37,13 @@ Les routes
 ////////////////////////////////////////// Route /
 app.set('view engine', 'ejs'); // générateur de template
 
-app.get('/:locale(en|fr)',  (req, res) => {
-  // on récupère le paramètre de l'url pour enregistrer la langue
 
-  res.setLocale(req.params.locale)
-  res.cookie('langueChoisie', req.params.locale)
-
-  // on peut maintenant traduire
-  //console.log('Cookies: ', req.cookies.langueChoisie);
-
-  res.redirect(req.get("referer"))
-  //res.render('accueil.ejs') 
-})
-
-
-////////////////////////////////////////////
+//////////////////////////////////////////
 app.get('/', function (req, res) {
 
-	res.render('accueil.ejs')  
+ res.render('accueil.ejs')  
  
-});
+  });
 
 
 
@@ -140,4 +123,39 @@ app.get('/vider', (req, res) => {
 	res.redirect('/adresse')
 })
 
+////////////////////////////////////////////////////////	AJAX
+
+// Dans notre application serveur
+// Une nouvelle route pour traiter la requête AJAX
+
+app.post('/ajax_modifier', (req,res) => {
+  req.body._id = ObjectID(req.body._id)
+  console.log("req.body._id = " + req.body._id)
+
+  db.collection('adresse').save(req.body, (err, result) => {
+    if (err) return console.log(err)
+    console.log('sauvegarder dans la BD')
+    res.send(JSON.stringify(req.body));
+    // res.status(204)
+  })
+})
+
+
+app.post('/ajax_detruire', (req,res) => {
+  db.collection('adresse').findOneAndDelete({"_id": ObjectID(req.body._id)}, (err, resultat) => {
+
+  if (err) return console.log(err)
+    res.send(JSON.stringify(req.body))  // redirige vers la route qui affiche la collection
+  })
+})
+
+app.post('/ajax_ajouter', (req, res) => {
+  console.log('route /ajax_ajouter') 
+  db.collection('adresse').save(req.body, (err, result) => {
+    if (err) return console.log(err)
+    // console.log(req.body) 
+    console.log('sauvegarder dans la BD')
+    res.send(JSON.stringify(req.body))
+  })
+})
 
